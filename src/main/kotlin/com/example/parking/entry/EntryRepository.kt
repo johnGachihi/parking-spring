@@ -1,4 +1,4 @@
-package com.example.parking.repositories
+package com.example.parking.entry
 
 import com.example.parking.models.Entry
 import org.springframework.data.jpa.repository.JpaRepository

@@ -1,7 +1,7 @@
 package com.example.parking.services
 
 import com.example.parking.models.Entry
-import com.example.parking.repositories.EntryRepository
+import com.example.parking.entry.EntryRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test

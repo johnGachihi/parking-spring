@@ -1,5 +1,6 @@
 package com.example.parking.repositories
 
+import com.example.parking.entry.EntryRepository
 import com.example.parking.models.Entry
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue

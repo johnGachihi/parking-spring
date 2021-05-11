@@ -1,5 +1,6 @@
 package com.example.parking.controllers
 
+import com.example.parking.entry.EntriesController
 import com.example.parking.models.Entry
 import com.example.parking.services.EntryService
 import com.example.parking.services.InvalidTicketCodeException
