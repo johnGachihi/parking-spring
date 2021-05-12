@@ -16,6 +16,6 @@ open class Entry(
     @CreationTimestamp
     @NotNull
     open var entryTime: Instant? = null,
-    open var ticketCode: String?,
+    open var ticketCode: String?,   // TODO: Change to Long
     open var exitTime: Instant? = null,
 )

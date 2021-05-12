@@ -13,7 +13,7 @@ open class RegisteredVehicle {
 
     @NotNull
     @Column(unique = true)
-    open var rfidCode: Long? = null
+    open var ticketCode: Long? = null
 
     @NotNull
     @Column(unique = true)

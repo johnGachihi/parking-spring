@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service
 class EntryService(
     private val entryRepository: EntryRepository
 ) {
+    // TODO: throw different exception for each invalid scenario
     fun addEntry(ticketCode: String): Entry {
         if (! isTicketCodeValid(ticketCode)) {
             throw InvalidTicketCodeException("Invalid ticket code: $ticketCode")
