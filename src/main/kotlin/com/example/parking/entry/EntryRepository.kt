@@ -8,10 +8,13 @@ import org.springframework.data.repository.query.Param
 import java.time.Instant
 
 interface EntryRepository: JpaRepository<Entry, Long> {
+    @Deprecated(message = "Use findFirstByTicketCodeOrderByEntryTimeDesc instead")
     @Query("select case when count(e) > 0 then true else false end from entries e where e.ticketCode = :ticketCode and e.exitTime is null ")
     fun isTicketCodeInUse(ticketCode: String): Boolean // TODO: Use Long
 
     @Modifying
     @Query("update entries e set e.exitTime = current_timestamp where e.ticketCode = :ticketCode")
     fun markExited(@Param("ticketCode") ticketCode: String)
+
+    fun findFirstByTicketCodeAndExitTimeIsNull(ticketCode: String): Entry?
 }

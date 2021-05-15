@@ -3,6 +3,7 @@ package com.example.parking.services
 import com.example.parking.models.Entry
 import com.example.parking.entry.EntryRepository
 import org.springframework.stereotype.Service
+import kotlin.Exception
 
 @Service
 class EntryService(
@@ -26,3 +27,7 @@ class EntryService(
 class InvalidTicketCodeException(
     message: String? = null
 ) : IllegalArgumentException(message)
+
+class UnservicedParkingBill(
+    message: String? = null
+) : Exception(message)

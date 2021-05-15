@@ -68,4 +68,29 @@ class EntryRepositoryTest @Autowired constructor( // TODO: Make DI style uniform
             assertThat(exitTime).isBeforeOrEqualTo(updateTime)
         }
     }
+
+    @Test
+    fun `test findLatestByTicketCode, when entries exist, then returns latest`() {
+        val ticketCode = 1234567890L
+
+        entityManager.persist(
+            Entry(ticketCode = ticketCode.toString()))
+        entityManager.persist(
+            Entry(ticketCode = ticketCode.toString()))
+        val latestEntryId = entityManager.persistAndGetId(
+            Entry(ticketCode = ticketCode.toString()))
+        entityManager.flush()
+
+        val actualEntry = entryRepository.findFirstByTicketCodeAndExitTimeIsNull(ticketCode.toString())
+
+        assertThat(actualEntry).isNotNull
+        assertThat(actualEntry!!.id).isEqualTo(latestEntryId)
+    }
+
+    @Test
+    fun `test findLatestByTicketCode, when entries do not exist, then returns null`() {
+        assertThat(
+            entryRepository.findFirstByTicketCodeAndExitTimeIsNull("1234567890")
+        ).isNull()
+    }
 }

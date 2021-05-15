@@ -3,10 +3,10 @@ package com.example.parking.services
 import com.example.parking.entry.EntryRepository
 import com.example.parking.exit.ExitUseCase
 import com.example.parking.exit.RegisteredVehicleRepository
-import com.example.parking.models.RegisteredVehicle
-import org.assertj.core.api.Assertions.*
+import com.example.parking.models.Entry
+import com.example.parking.util.ParkingFeeCalc
+import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
@@ -21,32 +21,22 @@ class ExitUseCaseTest {
     @Mock
     lateinit var entryRepository: EntryRepository
 
+    @Mock
+    lateinit var parkingFeeCalc: ParkingFeeCalc
+
     @InjectMocks
     lateinit var exitUseCase: ExitUseCase
 
     @Test
-    fun `test exit, when ticketCode is not 'in use', then throws`() {
-        `when`(entryRepository.isTicketCodeInUse("12345"))
-            .thenReturn(false)
+    fun `test exit, when ticketCode is not associated to unexited Entry, then throws`() {
+        `when`(entryRepository.findFirstByTicketCodeAndExitTimeIsNull("12345"))
+            .thenReturn(null)
 
         assertThatExceptionOfType(InvalidTicketCodeException::class.java).isThrownBy {
             exitUseCase.exit(12345)
         }.withMessage("The provided ticket code is not in use. Ticket code: 12345")
 
         verify(entryRepository, times(0)).markExited("12345")
-    }
-
-    @Test
-    fun `test exit, when ticketCode is in use and is not for registered vehicle, then throws`() {
-        val ticketCode = 12345L
-        `when`(entryRepository.isTicketCodeInUse(ticketCode.toString()))
-            .thenReturn(true)
-        `when`(registeredVehicleRepository.existsRegisteredVehicleByTicketCode(ticketCode))
-            .thenReturn(false)
-
-        assertThatExceptionOfType(InvalidTicketCodeException::class.java).isThrownBy {
-            exitUseCase.exit(ticketCode)
-        }.withMessage("Ticket code does not belong to any registered vehicle. Ticket code: $ticketCode")
     }
 
     @Test
@@ -60,5 +50,28 @@ class ExitUseCaseTest {
         exitUseCase.exit(ticketCode)
 
         verify(entryRepository, times(1)).markExited(ticketCode.toString())
+    }
+
+    @Test
+    fun `test exit, when ticketCode is in use, is not for registered vehicle and fee is 0, then updates entry to show exited`() {
+        val ticketCode = 12345L
+        `when`(entryRepository.isTicketCodeInUse(ticketCode.toString()))
+            .thenReturn(true)
+        `when`(registeredVehicleRepository.existsRegisteredVehicleByTicketCode(ticketCode))
+            .thenReturn(false)
+        `when`(entryRepository.findFirstByTicketCodeAndExitTimeIsNull(ticketCode.toString()))
+            .thenReturn(Entry(ticketCode = ticketCode.toString()))
+        `when`(parkingFeeCalc.calculateFee(anyLong()))
+            .thenReturn(0.0)
+
+        exitUseCase.exit(ticketCode)
+
+        verify(entryRepository, times(1))
+            .markExited(ticketCode.toString())
+    }
+
+    @Test
+    fun `test exit, when ticketCode is in use, is not for registered vehicle, fee is not 0 and there are no payments, then throws payment not made`() {
+
     }
 }
