@@ -31,8 +31,6 @@ internal class ParkingFeeCalcTest {
 
     @Test
     fun `test when timeOfStay is within defined range, then returns correct fee`() {
-        `when`(parkingFeeRepository.count()).thenReturn(1)
-
         `when`(parkingFeeRepository.findFirstByPointOnTimeLineGreaterThanEqualOrderByPointOnTimeLine(10))
             .thenReturn(
                 ParkingTimeRange().apply {
@@ -48,8 +46,6 @@ internal class ParkingFeeCalcTest {
 
     @Test
     fun `test when timeOfStay is beyond all defined ranges, then returns fee for last range on timeline`() {
-        `when`(parkingFeeRepository.count()).thenReturn(1)
-
         `when`(parkingFeeRepository.findFirstByPointOnTimeLineGreaterThanEqualOrderByPointOnTimeLine(10))
             .thenReturn(null)
 

@@ -1,8 +1,8 @@
 package com.example.parking.controllers
 
-import com.example.parking.entry.EntriesController
-import com.example.parking.models.Entry
-import com.example.parking.services.EntryService
+import com.example.parking.visit.VisitController
+import com.example.parking.models.Visit
+import com.example.parking.services.VisitService
 import com.example.parking.services.InvalidTicketCodeException
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
@@ -15,14 +15,14 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@WebMvcTest(controllers = [EntriesController::class])
-class EntryRepositoryTest {
+@WebMvcTest(controllers = [VisitController::class])
+class VisitRepositoryTest {
     @Autowired
     lateinit var mockMvc: MockMvc
     @Autowired
     lateinit var objectMapper: ObjectMapper
     @MockBean
-    lateinit var entryService: EntryService
+    lateinit var visitService: VisitService
 
     @Test
     fun `test addEntry route when request lacks required content, then returns 400`() {
@@ -48,14 +48,14 @@ class EntryRepositoryTest {
                 .content("1234567890"))
             .andExpect(status().isOk)
 
-        verify(entryService, times(1))
-            .addEntry("1234567890")
+        verify(visitService, times(1))
+            .addVisit("1234567890")
     }
 
     @Test
     fun `test addEntry route when valid request, then returns Entry resource`() {
-        `when`(entryService.addEntry("1234567890"))
-            .thenReturn(Entry(ticketCode = "1234567890"))
+        `when`(visitService.addVisit("1234567890"))
+            .thenReturn(Visit().apply { ticketCode = "1234567890" })
 
         val mvcResponse = mockMvc.perform(
             post("/entries")
@@ -64,14 +64,14 @@ class EntryRepositoryTest {
             .andReturn()
 
         val actualResponseBody = objectMapper.readValue(
-            mvcResponse.response.contentAsString, Entry::class.java)
+            mvcResponse.response.contentAsString, Visit::class.java)
 
         assertThat(actualResponseBody.ticketCode).isEqualTo("1234567890")
     }
 
     @Test
     fun `test addEntry route when ticket code invalid, then proper error response returned`() {
-        `when`(entryService.addEntry("1234567890"))
+        `when`(visitService.addVisit("1234567890"))
             .thenThrow(InvalidTicketCodeException("Exception message. Oh noo!"))
 
         val mvcResponse = mockMvc.perform(

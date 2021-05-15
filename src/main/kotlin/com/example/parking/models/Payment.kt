@@ -11,8 +11,10 @@ open class Payment {
     var id: Long? = null
 
     @ManyToOne
-    var entry: Entry? = null
+    var visit: Visit? = null
 
     @CreationTimestamp
     var madeAt: Instant? = null
+
+    var amount: Int = 0
 }

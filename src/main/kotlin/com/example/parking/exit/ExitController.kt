@@ -9,13 +9,13 @@ import org.springframework.web.server.ResponseStatusException
 
 @RestController
 class ExitController(
-    private val exitUseCase: ExitUseCase
+    private val exitService: ExitService
 ) {
 
     @PutMapping("/exit")
     fun exit(@RequestBody ticketCode: TicketCode) {
         try {
-            exitUseCase.exit(ticketCode.ticketCode)
+            exitService.exit(ticketCode.ticketCode)
         } catch (e: InvalidTicketCodeException) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message)
         }

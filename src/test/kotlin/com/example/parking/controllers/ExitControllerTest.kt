@@ -1,7 +1,7 @@
 package com.example.parking.controllers
 
 import com.example.parking.exit.ExitController
-import com.example.parking.exit.ExitUseCase
+import com.example.parking.exit.ExitService
 import com.example.parking.exit.TicketCode
 import com.example.parking.services.InvalidTicketCodeException
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -24,7 +24,7 @@ class ExitControllerTest {
     lateinit var objectMapper: ObjectMapper
 
     @MockBean
-    lateinit var exitUseCase: ExitUseCase
+    lateinit var exitService: ExitService
 
     @Test
     fun `test exit route, when valid request made, then returns 200`() {
@@ -48,7 +48,7 @@ class ExitControllerTest {
                 .content(objectMapper.writeValueAsBytes(ticketCode))
         )
 
-        verify(exitUseCase, times(1)).exit(ticketCode.ticketCode)
+        verify(exitService, times(1)).exit(ticketCode.ticketCode)
     }
 
     @Test
@@ -56,7 +56,7 @@ class ExitControllerTest {
         val ticketCode = TicketCode(1234567890L)
         val exMessage = "Exception thrown!!!"
 
-        `when`(exitUseCase.exit(ticketCode.ticketCode))
+        `when`(exitService.exit(ticketCode.ticketCode))
             .thenThrow(InvalidTicketCodeException(exMessage))
 
         val errResponse = mockMvc.perform(
