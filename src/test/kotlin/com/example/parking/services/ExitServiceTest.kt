@@ -1,6 +1,5 @@
 package com.example.parking.services
 
-import com.example.parking.visit.VisitRepository
 import com.example.parking.exit.ExitService
 import com.example.parking.exit.PaymentService
 import com.example.parking.exit.RegisteredVehicleRepository
@@ -15,6 +14,8 @@ import com.example.parking.visit.OngoingVisitRepo
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentCaptor
@@ -29,9 +30,6 @@ import java.time.Instant
 class ExitServiceTest {
     @Mock
     lateinit var registeredVehicleRepository: RegisteredVehicleRepository
-
-    @Mock
-    lateinit var visitRepository: VisitRepository
 
     @Mock
     lateinit var ongoingVisitRepo: OngoingVisitRepo
@@ -106,7 +104,7 @@ class ExitServiceTest {
         `when`(parkingFeeCalc.calculateFee(anyLong()))
             .thenReturn(0.0)
 
-        exitService.exit(ticketCode.toLong())
+        exitService.exit(ticketCode)
 
         assertFinishesVisit()
     }
@@ -117,7 +115,7 @@ class ExitServiceTest {
 
         `when`(ongoingVisitRepo.findByTicketCode(ongoingVisit.ticketCode))
             .thenReturn(ongoingVisit)
-        `when`(registeredVehicleRepository.existsByTicketCode(ongoingVisit.ticketCode.toLong()))
+        `when`(registeredVehicleRepository.existsByTicketCode(ongoingVisit.ticketCode))
             .thenReturn(false)
         `when`(parkingFeeCalc.calculateFee(anyLong()))
             .thenReturn(100.0)

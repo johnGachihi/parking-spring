@@ -41,7 +41,7 @@ internal class VisitServiceTest {
 
         `when`(ongoingVisitRepo.existsByTicketCode(anyLong()))
             .thenReturn(false)
-        `when`(ongoingVisitRepo.save(any())) // TODO: Figure out how to by-pass this
+        `when`(ongoingVisitRepo.save(any()))
             .thenReturn(visit)
 
         visitService.addVisit(ticketCode)

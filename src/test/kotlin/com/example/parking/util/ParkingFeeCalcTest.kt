@@ -16,10 +16,9 @@ internal class ParkingFeeCalcTest {
     lateinit var parkingFeeRepository: ParkingFeeRepository
 
     @Test
-    fun `test when there is no parking fee data in DB, then return fee as 0`() {
+    fun `when there is no parking billing data in DB, then return fee as 0`() {
         `when`(parkingFeeRepository.findFirstByPointOnTimeLineGreaterThanEqualOrderByPointOnTimeLine(10))
             .thenReturn(null)
-
         `when`(parkingFeeRepository.findFirstByOrderByPointOnTimeLineDesc())
             .thenReturn(null)
 
@@ -30,7 +29,7 @@ internal class ParkingFeeCalcTest {
     }
 
     @Test
-    fun `test when timeOfStay is within defined range, then returns correct fee`() {
+    fun `when timeOfStay is within a defined range, then returns correct fee`() {
         `when`(parkingFeeRepository.findFirstByPointOnTimeLineGreaterThanEqualOrderByPointOnTimeLine(10))
             .thenReturn(
                 ParkingTimeRange().apply {
@@ -39,13 +38,12 @@ internal class ParkingFeeCalcTest {
                 })
 
         val parkingFeeCalc = ParkingFeeCalc(parkingFeeRepository)
-
         assertThat(parkingFeeCalc.calculateFee(10))
             .isEqualTo(200.0)
     }
 
     @Test
-    fun `test when timeOfStay is beyond all defined ranges, then returns fee for last range on timeline`() {
+    fun `when timeOfStay is beyond all defined ranges, then returns fee for last range on timeline`() {
         `when`(parkingFeeRepository.findFirstByPointOnTimeLineGreaterThanEqualOrderByPointOnTimeLine(10))
             .thenReturn(null)
 
