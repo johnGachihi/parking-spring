@@ -23,7 +23,7 @@ class ExitService(
             ?: throw InvalidTicketCodeException(
                 "The provided ticket code is not in use. Ticket code: $ticketCode")
 
-        if (registeredVehicleRepository.existsRegisteredVehicleByTicketCode(ticketCode)) {
+        if (registeredVehicleRepository.existsByTicketCode(ticketCode)) {
             markOnGoingEntryAsFinished(ongoingVisit)
             return
         }

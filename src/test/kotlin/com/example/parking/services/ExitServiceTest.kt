@@ -87,7 +87,7 @@ class ExitServiceTest {
 
         `when`(ongoingVisitRepo.findByTicketCode(ticketCode))
             .thenReturn(ongoingVisit)
-        `when`(registeredVehicleRepository.existsRegisteredVehicleByTicketCode(ticketCode))
+        `when`(registeredVehicleRepository.existsByTicketCode(ticketCode))
             .thenReturn(true)
 
         exitService.exit(ticketCode)
@@ -101,7 +101,7 @@ class ExitServiceTest {
 
         `when`(ongoingVisitRepo.findByTicketCode(ticketCode))
             .thenReturn(ongoingVisit)
-        `when`(registeredVehicleRepository.existsRegisteredVehicleByTicketCode(ticketCode))
+        `when`(registeredVehicleRepository.existsByTicketCode(ticketCode))
             .thenReturn(false)
         `when`(parkingFeeCalc.calculateFee(anyLong()))
             .thenReturn(0.0)
@@ -117,7 +117,7 @@ class ExitServiceTest {
 
         `when`(ongoingVisitRepo.findByTicketCode(ongoingVisit.ticketCode))
             .thenReturn(ongoingVisit)
-        `when`(registeredVehicleRepository.existsRegisteredVehicleByTicketCode(ongoingVisit.ticketCode.toLong()))
+        `when`(registeredVehicleRepository.existsByTicketCode(ongoingVisit.ticketCode.toLong()))
             .thenReturn(false)
         `when`(parkingFeeCalc.calculateFee(anyLong()))
             .thenReturn(100.0)
@@ -131,7 +131,7 @@ class ExitServiceTest {
     fun `when ticketCode is not for registered vehicle, fee is not 0 and last payment has expired, then throws unserviced bill exception`() {
         `when`(ongoingVisitRepo.findByTicketCode(ongoingVisit.ticketCode))
             .thenReturn(ongoingVisit)
-        `when`(registeredVehicleRepository.existsRegisteredVehicleByTicketCode(ongoingVisit.ticketCode))
+        `when`(registeredVehicleRepository.existsByTicketCode(ongoingVisit.ticketCode))
             .thenReturn(false)
         `when`(parkingFeeCalc.calculateFee(anyLong()))
             .thenReturn(100.0)
@@ -147,7 +147,7 @@ class ExitServiceTest {
     fun `when ticketCode is not for registered vehicle, fee is not 0 and last payment has not expired, then finishes visit`() {
         `when`(ongoingVisitRepo.findByTicketCode(ongoingVisit.ticketCode))
             .thenReturn(ongoingVisit)
-        `when`(registeredVehicleRepository.existsRegisteredVehicleByTicketCode(ongoingVisit.ticketCode))
+        `when`(registeredVehicleRepository.existsByTicketCode(ongoingVisit.ticketCode))
             .thenReturn(false)
         `when`(parkingFeeCalc.calculateFee(anyLong()))
             .thenReturn(100.0)
