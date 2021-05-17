@@ -10,6 +10,7 @@ import com.example.parking.models.OngoingVisit
 import com.example.parking.models.Payment
 import com.example.parking.util.ParkingFeeCalc
 import com.example.parking.visit.FinishedVisitRepo
+import com.example.parking.visit.InvalidTicketCodeException
 import com.example.parking.visit.OngoingVisitRepo
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType

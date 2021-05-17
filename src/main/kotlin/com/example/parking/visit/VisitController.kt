@@ -1,8 +1,6 @@
 package com.example.parking.visit
 
 import com.example.parking.models.Visit
-import com.example.parking.services.VisitService
-import com.example.parking.services.InvalidTicketCodeException
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody

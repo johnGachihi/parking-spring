@@ -2,7 +2,7 @@ package com.example.parking.exit
 
 import com.example.parking.models.FinishedVisit
 import com.example.parking.models.OngoingVisit
-import com.example.parking.services.InvalidTicketCodeException
+import com.example.parking.visit.InvalidTicketCodeException
 import com.example.parking.util.ParkingFeeCalc
 import com.example.parking.visit.FinishedVisitRepo
 import com.example.parking.visit.OngoingVisitRepo
