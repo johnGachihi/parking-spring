@@ -56,7 +56,7 @@ class ExitServiceTest {
     @BeforeEach
     fun beforeEach() {
         ongoingVisit = OngoingVisit().apply {
-            this.ticketCode = "1234567890"
+            this.ticketCode = 1234567890
             entryTime = Instant.now()
         }
 
@@ -73,7 +73,7 @@ class ExitServiceTest {
 
     @Test
     fun `when ticketCode is not associated to any OngoingVisit, then throws`() {
-        `when`(ongoingVisitRepo.findByTicketCode("12345"))
+        `when`(ongoingVisitRepo.findByTicketCode(12345))
             .thenReturn(null)
 
         assertThatExceptionOfType(InvalidTicketCodeException::class.java).isThrownBy {
@@ -83,9 +83,9 @@ class ExitServiceTest {
 
     @Test
     fun `when ticketCode is for registered vehicle, then finishes visit`() {
-        val ticketCode = ongoingVisit.ticketCode.toLong()
+        val ticketCode = ongoingVisit.ticketCode
 
-        `when`(ongoingVisitRepo.findByTicketCode(ticketCode.toString()))
+        `when`(ongoingVisitRepo.findByTicketCode(ticketCode))
             .thenReturn(ongoingVisit)
         `when`(registeredVehicleRepository.existsRegisteredVehicleByTicketCode(ticketCode))
             .thenReturn(true)
@@ -97,9 +97,9 @@ class ExitServiceTest {
 
     @Test
     fun `when ticketCode is not for registered vehicle and fee is 0, then finishes visit`() {
-        val ticketCode = ongoingVisit.ticketCode.toLong()
+        val ticketCode = ongoingVisit.ticketCode
 
-        `when`(ongoingVisitRepo.findByTicketCode(ticketCode.toString()))
+        `when`(ongoingVisitRepo.findByTicketCode(ticketCode))
             .thenReturn(ongoingVisit)
         `when`(registeredVehicleRepository.existsRegisteredVehicleByTicketCode(ticketCode))
             .thenReturn(false)
@@ -123,7 +123,7 @@ class ExitServiceTest {
             .thenReturn(100.0)
 
         assertThatExceptionOfType(UnservicedParkingBill::class.java).isThrownBy {
-            exitService.exit(ongoingVisit.ticketCode.toLong())
+            exitService.exit(ongoingVisit.ticketCode)
         }
     }
 
@@ -131,7 +131,7 @@ class ExitServiceTest {
     fun `when ticketCode is not for registered vehicle, fee is not 0 and last payment has expired, then throws unserviced bill exception`() {
         `when`(ongoingVisitRepo.findByTicketCode(ongoingVisit.ticketCode))
             .thenReturn(ongoingVisit)
-        `when`(registeredVehicleRepository.existsRegisteredVehicleByTicketCode(ongoingVisit.ticketCode.toLong()))
+        `when`(registeredVehicleRepository.existsRegisteredVehicleByTicketCode(ongoingVisit.ticketCode))
             .thenReturn(false)
         `when`(parkingFeeCalc.calculateFee(anyLong()))
             .thenReturn(100.0)
@@ -139,7 +139,7 @@ class ExitServiceTest {
             .thenReturn(true)
 
         assertThatExceptionOfType(UnservicedParkingBill::class.java).isThrownBy {
-            exitService.exit(ongoingVisit.ticketCode.toLong())
+            exitService.exit(ongoingVisit.ticketCode)
         }.withMessage("Latest payment expired")
     }
 
@@ -147,14 +147,14 @@ class ExitServiceTest {
     fun `when ticketCode is not for registered vehicle, fee is not 0 and last payment has not expired, then finishes visit`() {
         `when`(ongoingVisitRepo.findByTicketCode(ongoingVisit.ticketCode))
             .thenReturn(ongoingVisit)
-        `when`(registeredVehicleRepository.existsRegisteredVehicleByTicketCode(ongoingVisit.ticketCode.toLong()))
+        `when`(registeredVehicleRepository.existsRegisteredVehicleByTicketCode(ongoingVisit.ticketCode))
             .thenReturn(false)
         `when`(parkingFeeCalc.calculateFee(anyLong()))
             .thenReturn(100.0)
         `when`(paymentService.hasLatestPaymentExpired(ongoingVisit))
             .thenReturn(false)
 
-        exitService.exit(ongoingVisit.ticketCode.toLong())
+        exitService.exit(ongoingVisit.ticketCode)
 
         assertFinishesVisit()
     }

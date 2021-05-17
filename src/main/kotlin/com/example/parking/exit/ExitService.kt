@@ -19,7 +19,7 @@ class ExitService(
     private val paymentService: PaymentService  //combine
 ) {
     fun exit(ticketCode: Long) {
-        val ongoingVisit = ongoingVisitRepo.findByTicketCode(ticketCode.toString())
+        val ongoingVisit = ongoingVisitRepo.findByTicketCode(ticketCode)
             ?: throw InvalidTicketCodeException(
                 "The provided ticket code is not in use. Ticket code: $ticketCode")
 

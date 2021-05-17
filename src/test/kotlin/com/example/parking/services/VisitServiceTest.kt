@@ -23,23 +23,23 @@ internal class VisitServiceTest {
     @InjectMocks
     lateinit var visitService: VisitService
 
+    private val ticketCode = 1234567890L
+
     @Test
     fun `when ticketCode has associated OngoingVisit, then throw InvalidTicketCodeException`() {
-        val ticketCode = 1234567890L
-        `when`(ongoingVisitRepo.existsByTicketCode(anyString()))
+        `when`(ongoingVisitRepo.existsByTicketCode(anyLong()))
             .thenReturn(true)
 
         assertThatExceptionOfType(InvalidTicketCodeException::class.java).isThrownBy {
-            visitService.addVisit(ticketCode.toString())
+            visitService.addVisit(ticketCode)
         }.withMessage("Provided ticket code is in use: $ticketCode")
     }
 
     @Test
     fun `when ticketCode is valid, then persists new visit`() {
-        val ticketCode = "1234567890"
         val visit = OngoingVisit().apply { this.ticketCode = ticketCode }
 
-        `when`(ongoingVisitRepo.existsByTicketCode(anyString()))
+        `when`(ongoingVisitRepo.existsByTicketCode(anyLong()))
             .thenReturn(false)
         `when`(ongoingVisitRepo.save(any())) // TODO: Figure out how to by-pass this
             .thenReturn(visit)
@@ -53,7 +53,6 @@ internal class VisitServiceTest {
 
     @Test
     fun `when ticketCode is valid, then returns saved Entry`() {
-        val ticketCode = "1234567890"
         val expectedEntry = OngoingVisit().apply {
             id = 1
             entryTime = Instant.now()

@@ -1,5 +1,6 @@
 package com.example.parking.visit
 
+import com.example.parking.dtos.TicketCode
 import com.example.parking.models.Visit
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.PostMapping
@@ -12,9 +13,9 @@ class VisitController(
     val visitService: VisitService
 ) {
     @PostMapping("/entries")
-    fun addEntry(@RequestBody ticketCode: String): Visit {
+    fun addEntry(@RequestBody ticketCode: TicketCode): Visit {
         return try {
-            visitService.addVisit(ticketCode)
+            visitService.addVisit(ticketCode.ticketCode)
         } catch (e: InvalidTicketCodeException) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message)
         }

@@ -8,14 +8,14 @@ import org.springframework.stereotype.Service
 class VisitService(
     private val ongoingVisitRepo: OngoingVisitRepo,
 ) {
-    fun addVisit(ticketCode: String): Visit {
+    fun addVisit(ticketCode: Long): Visit {
         if (isTicketCodeInUse(ticketCode)) {
             throw InvalidTicketCodeException("Provided ticket code is in use: $ticketCode")
         }
         return ongoingVisitRepo.save(OngoingVisit().apply { this.ticketCode = ticketCode })
     }
 
-    private fun isTicketCodeInUse(ticketCode: String): Boolean {
+    private fun isTicketCodeInUse(ticketCode: Long): Boolean {
         return ongoingVisitRepo.existsByTicketCode(ticketCode)
     }
 }

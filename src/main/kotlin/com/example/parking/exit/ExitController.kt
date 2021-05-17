@@ -1,5 +1,6 @@
 package com.example.parking.exit
 
+import com.example.parking.dtos.TicketCode
 import com.example.parking.visit.InvalidTicketCodeException
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.PutMapping
@@ -22,6 +23,4 @@ class ExitController(
     }
 
 }
-
-class TicketCode(val ticketCode: Long)
 

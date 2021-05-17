@@ -4,6 +4,6 @@ import com.example.parking.models.OngoingVisit
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface OngoingVisitRepo : JpaRepository<OngoingVisit, Long> {
-    fun findByTicketCode(ticketCode: String): OngoingVisit?
-    fun existsByTicketCode(ticketCode: String): Boolean
+    fun findByTicketCode(ticketCode: Long): OngoingVisit?
+    fun existsByTicketCode(ticketCode: Long): Boolean
 }

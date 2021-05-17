@@ -5,7 +5,7 @@ import java.time.Instant
 import javax.persistence.*
 import javax.validation.constraints.NotNull
 
-@Entity(name = "entries")
+@Entity(name = "visits")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 open class Visit {
     @Id
@@ -17,7 +17,7 @@ open class Visit {
     open var entryTime: Instant = Instant.now()
 
     @NotNull
-    open var ticketCode: String = ""   // TODO: Change to Long
+    open var ticketCode: Long = 0L
 
     @OneToMany(
         mappedBy = "visit", cascade = [CascadeType.ALL],
