@@ -1,29 +1,22 @@
-package com.example.parking.services
+package com.example.parking.visit
 
+import com.example.parking.models.OngoingVisit
 import com.example.parking.models.Visit
-import com.example.parking.visit.VisitRepository
 import org.springframework.stereotype.Service
-import kotlin.Exception
 
-// Change name to VisitService
 @Service
 class VisitService(
-    private val visitRepository: VisitRepository
+    private val ongoingVisitRepo: OngoingVisitRepo,
 ) {
-    // TODO: throw different exception for each invalid scenario
     fun addVisit(ticketCode: String): Visit {
-        if (! isTicketCodeValid(ticketCode)) {
-            throw InvalidTicketCodeException("Invalid ticket code: $ticketCode")
+        if (isTicketCodeInUse(ticketCode)) {
+            throw InvalidTicketCodeException("Provided ticket code is in use: $ticketCode")
         }
-        // OngoingVisitRepo.save
-        return visitRepository.save(Visit().apply { this.ticketCode = ticketCode })
+        return ongoingVisitRepo.save(OngoingVisit().apply { this.ticketCode = ticketCode })
     }
 
-    // TODO Move ticketCode validation to TicketCodeService
-    // 1. Must not be in use
-    private fun isTicketCodeValid(ticketCode: String): Boolean {
-        // use ongoingRepository.existsByTicketCode(...)
-        return !visitRepository.isTicketCodeInUse(ticketCode)
+    private fun isTicketCodeInUse(ticketCode: String): Boolean {
+        return ongoingVisitRepo.existsByTicketCode(ticketCode)
     }
 }
 

@@ -1,9 +1,13 @@
 package com.example.parking.services
 
+import com.example.parking.models.OngoingVisit
 import com.example.parking.models.Visit
+import com.example.parking.visit.InvalidTicketCodeException
+import com.example.parking.visit.OngoingVisitRepo
 import com.example.parking.visit.VisitRepository
+import com.example.parking.visit.VisitService
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.*
+import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
@@ -15,43 +19,48 @@ import java.time.Instant
 @ExtendWith(MockitoExtension::class)
 internal class VisitServiceTest {
     @Mock
-    lateinit var visitRepository: VisitRepository
+    lateinit var ongoingVisitRepo: OngoingVisitRepo
     @InjectMocks
     lateinit var visitService: VisitService
 
     @Test
-    fun `test addEntry when ticketCode is invalid, then throw InvalidTicketCodeException`() {
-        `when`(visitRepository.isTicketCodeInUse(anyString()))
+    fun `when ticketCode has associated OngoingVisit, then throw InvalidTicketCodeException`() {
+        val ticketCode = 1234567890L
+        `when`(ongoingVisitRepo.existsByTicketCode(anyString()))
             .thenReturn(true)
 
-        assertThrows(InvalidTicketCodeException::class.java) {
-            visitService.addVisit(anyString())
-        }
+        assertThatExceptionOfType(InvalidTicketCodeException::class.java).isThrownBy {
+            visitService.addVisit(ticketCode.toString())
+        }.withMessage("Provided ticket code is in use: $ticketCode")
     }
 
     @Test
-    fun `test addEntry when ticketCode is valid, then calls entryRepository's save`() {
+    fun `when ticketCode is valid, then persists new visit`() {
         val ticketCode = "1234567890"
-        `when`(visitRepository.isTicketCodeInUse(ticketCode))
+        val visit = OngoingVisit().apply { this.ticketCode = ticketCode }
+
+        `when`(ongoingVisitRepo.existsByTicketCode(anyString()))
             .thenReturn(false)
-        `when`(visitRepository.save(any(Visit::class.java))) // TODO: Figure out how to by-pass this
-            .thenReturn(Visit().apply { this.ticketCode = ticketCode })
+        `when`(ongoingVisitRepo.save(any())) // TODO: Figure out how to by-pass this
+            .thenReturn(visit)
 
         visitService.addVisit(ticketCode)
 
-        verify(visitRepository).save(any(Visit::class.java))
+        verify(ongoingVisitRepo).save(argThat {
+            it.ticketCode == ticketCode
+        })
     }
 
     @Test
-    fun `test addEntry when ticketCode is valid, then returns saved Entry`() {
+    fun `when ticketCode is valid, then returns saved Entry`() {
         val ticketCode = "1234567890"
-        val expectedEntry = Visit().apply {
+        val expectedEntry = OngoingVisit().apply {
             id = 1
             entryTime = Instant.now()
             this.ticketCode = ticketCode
         }
 
-        `when`(visitRepository.save(any()))
+        `when`(ongoingVisitRepo.save(any()))
             .thenReturn(expectedEntry)
 
         val actualEntry = visitService.addVisit(ticketCode)
