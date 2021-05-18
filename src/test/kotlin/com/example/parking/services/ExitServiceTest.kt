@@ -16,10 +16,7 @@ import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.ArgumentCaptor
-import org.mockito.Captor
-import org.mockito.InjectMocks
-import org.mockito.Mock
+import org.mockito.*
 import org.mockito.Mockito.*
 import org.mockito.junit.jupiter.MockitoExtension
 import java.time.Instant
@@ -125,7 +122,7 @@ class ExitServiceTest {
             .thenReturn(false)
         `when`(paymentService.calculateFee(Minutes(anyLong())))
             .thenReturn(100.0)
-        `when`(paymentService.hasLatestPaymentExpired(ongoingVisit))
+        `when`(paymentService.paymentExpired(anyObject()))
             .thenReturn(true)
 
         assertThatExceptionOfType(UnservicedParkingBill::class.java).isThrownBy {
@@ -141,7 +138,7 @@ class ExitServiceTest {
             .thenReturn(false)
         `when`(paymentService.calculateFee(Minutes(anyLong())))
             .thenReturn(100.0)
-        `when`(paymentService.hasLatestPaymentExpired(ongoingVisit))
+        `when`(paymentService.paymentExpired(anyObject()))
             .thenReturn(false)
 
         exitService.exit(ongoingVisit.ticketCode)
@@ -159,4 +156,11 @@ class ExitServiceTest {
             .extracting("ticketCode", "entryTime")
             .containsExactly(ongoingVisit.ticketCode, ongoingVisit.entryTime)
     }
+
+    private fun <T> anyObject(): T {
+        any<T>()
+        return uninitialized()
+    }
+
+    private fun <T> uninitialized(): T = null as T
 }

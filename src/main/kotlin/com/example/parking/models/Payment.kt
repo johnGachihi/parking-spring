@@ -14,7 +14,7 @@ open class Payment {
     var visit: Visit? = null
 
     @CreationTimestamp
-    var madeAt: Instant? = null
+    var madeAt: Instant = Instant.now()
 
     var amount: Int = 0
 }
