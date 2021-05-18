@@ -2,8 +2,8 @@ package com.example.parking.exit
 
 import com.example.parking.models.FinishedVisit
 import com.example.parking.models.OngoingVisit
+import com.example.parking.util.Minutes
 import com.example.parking.visit.InvalidTicketCodeException
-import com.example.parking.util.ParkingFeeCalc
 import com.example.parking.visit.FinishedVisitRepo
 import com.example.parking.visit.OngoingVisitRepo
 import org.springframework.stereotype.Service
@@ -14,9 +14,8 @@ import java.time.temporal.ChronoUnit
 class ExitService(
     private val registeredVehicleRepository: RegisteredVehicleRepository,
     private val ongoingVisitRepo: OngoingVisitRepo,   //
-    private val finishedVisitRepo: FinishedVisitRepo, //combine
-    private val parkingFeeCalc: ParkingFeeCalc, //
-    private val paymentService: PaymentService  //combine
+    private val finishedVisitRepo: FinishedVisitRepo, //combine?
+    private val paymentService: PaymentService
 ) {
     fun exit(ticketCode: Long) {
         val ongoingVisit = ongoingVisitRepo.findByTicketCode(ticketCode)
@@ -28,8 +27,8 @@ class ExitService(
             return
         }
 
-        val parkingFee = parkingFeeCalc.calculateFee(
-            Instant.now().until(ongoingVisit.entryTime, ChronoUnit.MINUTES))
+        val parkingFee = paymentService.calculateFee(
+            getTimeOfStay(ongoingVisit))
 
         if (parkingFee == 0.0) {
             markOnGoingEntryAsFinished(ongoingVisit)
@@ -46,6 +45,10 @@ class ExitService(
 
         markOnGoingEntryAsFinished(ongoingVisit)
     }
+
+    private fun getTimeOfStay(ongoingVisit: OngoingVisit): Minutes =
+        Minutes(Instant.now().until(ongoingVisit.entryTime, ChronoUnit.MINUTES))
+
 
     private fun markOnGoingEntryAsFinished(ongoingVisit: OngoingVisit) {
         val finishedVisit = FinishedVisit().apply {

@@ -7,15 +7,13 @@ import com.example.parking.exit.UnservicedParkingBill
 import com.example.parking.models.FinishedVisit
 import com.example.parking.models.OngoingVisit
 import com.example.parking.models.Payment
-import com.example.parking.util.ParkingFeeCalc
+import com.example.parking.util.Minutes
 import com.example.parking.visit.FinishedVisitRepo
 import com.example.parking.visit.InvalidTicketCodeException
 import com.example.parking.visit.OngoingVisitRepo
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentCaptor
@@ -30,24 +28,18 @@ import java.time.Instant
 class ExitServiceTest {
     @Mock
     lateinit var registeredVehicleRepository: RegisteredVehicleRepository
-
     @Mock
     lateinit var ongoingVisitRepo: OngoingVisitRepo
-
     @Mock
     lateinit var finishedVisitRepo: FinishedVisitRepo
-
-    @Mock
-    lateinit var parkingFeeCalc: ParkingFeeCalc
-
     @Mock
     lateinit var paymentService: PaymentService
 
-    @Captor
-    lateinit var finishedVisitCaptor: ArgumentCaptor<FinishedVisit>
-
     @InjectMocks
     lateinit var exitService: ExitService
+
+    @Captor
+    lateinit var finishedVisitCaptor: ArgumentCaptor<FinishedVisit>
 
     lateinit var ongoingVisit: OngoingVisit
 
@@ -101,7 +93,7 @@ class ExitServiceTest {
             .thenReturn(ongoingVisit)
         `when`(registeredVehicleRepository.existsByTicketCode(ticketCode))
             .thenReturn(false)
-        `when`(parkingFeeCalc.calculateFee(anyLong()))
+        `when`(paymentService.calculateFee(Minutes(anyLong())))
             .thenReturn(0.0)
 
         exitService.exit(ticketCode)
@@ -117,7 +109,7 @@ class ExitServiceTest {
             .thenReturn(ongoingVisit)
         `when`(registeredVehicleRepository.existsByTicketCode(ongoingVisit.ticketCode))
             .thenReturn(false)
-        `when`(parkingFeeCalc.calculateFee(anyLong()))
+        `when`(paymentService.calculateFee(Minutes(anyLong())))
             .thenReturn(100.0)
 
         assertThatExceptionOfType(UnservicedParkingBill::class.java).isThrownBy {
@@ -131,7 +123,7 @@ class ExitServiceTest {
             .thenReturn(ongoingVisit)
         `when`(registeredVehicleRepository.existsByTicketCode(ongoingVisit.ticketCode))
             .thenReturn(false)
-        `when`(parkingFeeCalc.calculateFee(anyLong()))
+        `when`(paymentService.calculateFee(Minutes(anyLong())))
             .thenReturn(100.0)
         `when`(paymentService.hasLatestPaymentExpired(ongoingVisit))
             .thenReturn(true)
@@ -147,7 +139,7 @@ class ExitServiceTest {
             .thenReturn(ongoingVisit)
         `when`(registeredVehicleRepository.existsByTicketCode(ongoingVisit.ticketCode))
             .thenReturn(false)
-        `when`(parkingFeeCalc.calculateFee(anyLong()))
+        `when`(paymentService.calculateFee(Minutes(anyLong())))
             .thenReturn(100.0)
         `when`(paymentService.hasLatestPaymentExpired(ongoingVisit))
             .thenReturn(false)

@@ -1,5 +1,6 @@
 package com.example.parking.models
 
+import com.example.parking.util.Minutes
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
@@ -17,8 +18,7 @@ open class ParkingTimeRange {
     @NotNull
     @Min(1)
     @Column(unique = true)
-    open var pointOnTimeLine: Long = 0
-
+    open var upperLimit: Minutes = Minutes(0)
 
     @NotNull
     open var fee: Double = 0.0

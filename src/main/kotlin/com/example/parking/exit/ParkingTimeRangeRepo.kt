@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
 
 @Repository
-interface ParkingFeeRepository : JpaRepository<ParkingTimeRange, Long> {
-    fun findFirstByPointOnTimeLineGreaterThanEqualOrderByPointOnTimeLine(timeOfStayInMinutes: Long): ParkingTimeRange?
-    fun findFirstByOrderByPointOnTimeLineDesc(): ParkingTimeRange?
+interface ParkingTimeRangeRepo : JpaRepository<ParkingTimeRange, Long> {
+    @Query("select p from parking_time_range p order by p.upperLimit")
+    fun findAllOrderByUpperLimit(): List<ParkingTimeRange>
 }
